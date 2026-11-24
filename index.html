@@ -1,0 +1,1038 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rondas Campesinas Digital · Boletín informativo</title>
+<meta name="description" content="Sistema de gestión para las rondas campesinas: padrón, carnet con QR, asistencia, actas de justicia comunal, reportes y alertas. Lo que ya funciona y lo que viene con el apoyo de las autoridades.">
+<meta property="og:title" content="Rondas Campesinas Digital · Boletín informativo">
+<meta property="og:description" content="Del cuaderno a lo digital: organización, justicia comunal y seguridad para las rondas campesinas.">
+<meta property="og:image" content="img/portada.webp">
+<meta name="theme-color" content="#2a1d14">
+<link rel="icon" type="image/png" href="img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cafe-950: #1a120c;
+    --cafe-900: #2a1d14;
+    --cafe-800: #5c381a;
+    --cafe-700: #7d4c20;
+    --cafe-600: #9c6229;
+    --oro-500: #c4843f;
+    --oro-400: #d39c5c;
+    --oro-300: #dfb67f;
+    --oro-200: #ecd3ad;
+    --crema-100: #f5e9d6;
+    --crema-50: #fbf6ee;
+    --papel: #f3f1ed;
+    --tinta: #231a13;
+    --tinta-2: #5a4c40;
+    --linea: rgba(35, 26, 19, .12);
+    --verde: #1f9d6f;
+    --rojo: #d43c32;
+    --ambar: #d4930f;
+    --radio: 20px;
+    --sombra: 0 1px 2px rgba(35,26,19,.06), 0 12px 32px -12px rgba(35,26,19,.18);
+    --serif: "Fraunces", Georgia, "Times New Roman", serif;
+    --sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--papel); color: var(--tinta); font: 400 18px/1.65 var(--sans); overflow-x: hidden; }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: var(--serif); line-height: 1.12; margin: 0; letter-spacing: -.01em; }
+  h2 { font-size: clamp(2rem, 4.2vw, 3rem); font-weight: 600; }
+  h3 { font-size: 1.3rem; font-weight: 600; }
+  p { margin: 0; }
+  .contenedor { width: min(1180px, 100% - 32px); margin-inline: auto; }
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  svg.i { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+
+  /* ---------- Menú ---------- */
+  .menu { position: fixed; inset: 0 0 auto 0; z-index: 50; transition: background .3s, box-shadow .3s; }
+  .menu.solido { background: rgba(26,18,12,.92); backdrop-filter: blur(10px); box-shadow: 0 1px 0 rgba(255,255,255,.06); }
+  .menu .contenedor { display: flex; align-items: center; justify-content: space-between; gap: 16px; height: 68px; }
+  .marca { display: flex; align-items: center; gap: 10px; color: #fff; text-decoration: none; font-weight: 600; font-size: 1rem; line-height: 1.2; }
+  .marca img { width: 38px; height: 38px; border-radius: 50%; }
+  .marca small { display: block; color: var(--oro-300); font-weight: 500; font-size: .75rem; }
+  .menu nav { display: flex; gap: 4px; }
+  .menu nav a { color: rgba(255,255,255,.78); text-decoration: none; font-size: .9rem; font-weight: 500; padding: 8px 12px; border-radius: 999px; transition: color .2s, background .2s; }
+  .menu nav a:hover, .menu nav a.activo { color: #fff; background: rgba(255,255,255,.1); }
+  @media (max-width: 960px) { .menu nav { display: none; } }
+
+  /* ---------- Portada ---------- */
+  .portada { position: relative; min-height: 100svh; display: flex; align-items: flex-end; color: #fff; background: var(--cafe-950); overflow: hidden; }
+  .portada::before { content: ""; position: absolute; inset: 0; background: url("img/portada-fondo.webp") center 30% / cover no-repeat; opacity: .55; }
+  .portada::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(26,18,12,.55) 0%, rgba(26,18,12,.35) 35%, rgba(26,18,12,.92) 82%, var(--cafe-950) 100%); }
+  .portada .contenedor { position: relative; z-index: 1; padding: 140px 0 72px; }
+  .etiqueta { display: inline-flex; align-items: center; gap: 8px; font: 600 .78rem/1 var(--sans); letter-spacing: .14em; text-transform: uppercase; color: var(--oro-300); }
+  .etiqueta::before { content: ""; width: 28px; height: 2px; background: currentColor; }
+  .portada h1 { font-size: clamp(2.6rem, 7.5vw, 5.6rem); font-weight: 700; margin-top: 20px; max-width: 14ch; }
+  .portada h1 em { font-style: italic; color: var(--oro-300); font-weight: 600; }
+  .portada .bajada { margin-top: 22px; font-size: clamp(1.05rem, 2vw, 1.3rem); color: rgba(255,255,255,.82); max-width: 56ch; }
+  .botones { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+  .btn { display: inline-flex; align-items: center; gap: 10px; min-height: 52px; padding: 0 24px; border-radius: 999px; font: 600 1rem/1 var(--sans); text-decoration: none; transition: transform .2s, background .2s; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn-oro { background: var(--oro-500); color: var(--cafe-950); }
+  .btn-oro:hover { background: var(--oro-400); }
+  .btn-linea { border: 1.5px solid rgba(255,255,255,.4); color: #fff; }
+  .btn-linea:hover { background: rgba(255,255,255,.08); }
+  .cifras { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; margin-top: 56px; background: rgba(255,255,255,.12); border: 1px solid rgba(255,255,255,.12); border-radius: var(--radio); overflow: hidden; max-width: 760px; }
+  .cifras div { background: rgba(26,18,12,.6); padding: 20px 22px; backdrop-filter: blur(6px); }
+  .cifras b { display: block; font: 700 clamp(1.6rem, 3.6vw, 2.3rem)/1 var(--serif); color: var(--oro-300); }
+  .cifras span { display: block; margin-top: 8px; font-size: .88rem; color: rgba(255,255,255,.75); line-height: 1.35; }
+  @media (max-width: 560px) { .cifras { grid-template-columns: 1fr; } .cifras div { display: flex; align-items: center; gap: 16px; } .cifras span { margin: 0; } .cifras b { min-width: 3.2ch; } }
+
+  /* ---------- Secciones ---------- */
+  section { padding: clamp(72px, 10vw, 120px) 0; }
+  .cabecera { max-width: 760px; margin-bottom: 48px; }
+  .cabecera .etiqueta { color: var(--cafe-600); }
+  .cabecera h2 { margin-top: 14px; }
+  .cabecera p { margin-top: 16px; color: var(--tinta-2); font-size: 1.12rem; }
+  .oscuro { background: var(--cafe-950); color: #fff; }
+  .oscuro .cabecera .etiqueta { color: var(--oro-300); }
+  .oscuro .cabecera p, .futuro .cabecera p { color: rgba(255,255,255,.72); }
+  .futuro .cabecera .etiqueta { color: var(--oro-300); }
+  .futuro .cabecera p b { color: #fff; }
+  .crema { background: var(--crema-50); }
+
+  /* Problema */
+  .problemas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 960px) { .problemas { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 620px) { .problemas { grid-template-columns: 1fr; } }
+  .problema { display: flex; gap: 16px; padding: 22px; background: #fff; border-radius: var(--radio); border: 1px solid var(--linea); }
+  .problema .ico { width: 48px; height: 48px; border-radius: 14px; display: grid; place-items: center; background: #fdecea; color: var(--rojo); flex: none; }
+  .problema h3 { font-family: var(--sans); font-size: 1.02rem; font-weight: 600; }
+  .problema p { margin-top: 4px; font-size: .95rem; color: var(--tinta-2); line-height: 1.5; }
+  .giro { margin-top: 40px; padding: 28px 32px; border-radius: var(--radio); background: var(--cafe-900); color: #fff; display: flex; gap: 20px; align-items: center; }
+  .giro .ico { width: 56px; height: 56px; border-radius: 50%; display: grid; place-items: center; background: var(--oro-500); color: var(--cafe-950); flex: none; }
+  .giro p { font: 500 clamp(1.1rem, 2.2vw, 1.4rem)/1.4 var(--serif); }
+  .giro p b { color: var(--oro-300); font-weight: 600; }
+
+  /* Funciones */
+  .funciones { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .funcion.doble { grid-column: span 2; }
+  @media (max-width: 1060px) { .funciones { grid-template-columns: 1fr 1fr; } .funcion.doble { grid-column: auto; } }
+  @media (max-width: 620px) { .funciones { grid-template-columns: 1fr; } }
+  .funcion { padding: 26px; background: #fff; border-radius: var(--radio); border: 1px solid var(--linea); transition: transform .25s, box-shadow .25s; }
+  .funcion:hover { transform: translateY(-3px); box-shadow: var(--sombra); }
+  .funcion .ico { width: 52px; height: 52px; border-radius: 16px; display: grid; place-items: center; background: var(--crema-100); color: var(--cafe-700); }
+  .funcion h3 { margin-top: 18px; }
+  .funcion p { margin-top: 8px; color: var(--tinta-2); font-size: .98rem; line-height: 1.55; }
+  .listo { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; font-size: .78rem; font-weight: 600; color: var(--verde); background: #e6f6ef; padding: 5px 10px; border-radius: 999px; }
+  .listo svg.i { width: 14px; height: 14px; stroke-width: 2.6; }
+
+  /* Carnet destacado */
+  .carnet-bloque { display: grid; grid-template-columns: 1fr 1.25fr; gap: 48px; align-items: center; margin-top: 72px; }
+  .carnet-bloque h3 { font-size: clamp(1.6rem, 3vw, 2.2rem); }
+  .carnet-bloque p { margin-top: 14px; color: var(--tinta-2); }
+  .carnet-bloque ul { margin: 20px 0 0; padding: 0; list-style: none; display: grid; gap: 10px; }
+  .carnet-bloque li { display: flex; gap: 10px; align-items: flex-start; }
+  .carnet-bloque li svg.i { color: var(--verde); margin-top: 3px; width: 20px; height: 20px; }
+  .carnets { position: relative; min-height: 440px; }
+  .carnets img { position: absolute; width: 70%; border-radius: 14px; box-shadow: 0 24px 48px -16px rgba(35,26,19,.45); }
+  .carnets img:first-child { top: 0; left: 0; transform: rotate(-4deg); }
+  .carnets img:last-child { bottom: 0; right: 0; transform: rotate(3deg); }
+  @media (max-width: 860px) { .carnet-bloque { grid-template-columns: 1fr; } .carnets { min-height: 0; aspect-ratio: 1.25; } }
+
+  /* Cómo funciona */
+  .flujos { display: grid; gap: 28px; }
+  .flujo { background: #fff; border-radius: 28px; padding: clamp(24px, 4vw, 40px); border: 1px solid var(--linea); }
+  .flujo > h3 { display: flex; align-items: center; gap: 12px; }
+  .flujo > h3 span { font: 600 .75rem/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: var(--cafe-600); background: var(--crema-100); padding: 6px 10px; border-radius: 999px; }
+  .pasos { list-style: none; margin: 28px 0 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; counter-reset: paso; }
+  .pasos li { position: relative; counter-increment: paso; padding: 20px 16px; border-radius: 18px; background: var(--crema-50); border: 1px solid var(--crema-100); }
+  .pasos li::before { content: counter(paso); display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%; background: var(--cafe-800); color: #fff; font: 700 1rem/1 var(--serif); }
+  .pasos li:not(:last-child)::after { content: ""; position: absolute; top: 37px; right: -12px; width: 12px; height: 2px; background: var(--oro-400); }
+  .pasos b { display: block; margin-top: 14px; font-size: 1rem; line-height: 1.3; }
+  .pasos small { display: block; margin-top: 6px; font-size: .88rem; line-height: 1.45; color: var(--tinta-2); }
+  @media (max-width: 960px) { .pasos { grid-template-columns: 1fr; } .pasos li { display: grid; grid-template-columns: 36px 1fr; column-gap: 16px; } .pasos li::before { grid-row: span 2; } .pasos b { margin-top: 4px; } .pasos li:not(:last-child)::after { top: auto; bottom: -12px; left: 33px; right: auto; width: 2px; height: 12px; } }
+
+  /* Perfiles */
+  .perfiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .perfil { padding: 30px; border-radius: 24px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,.1); }
+  .perfil .nivel { font: 600 .75rem/1 var(--sans); letter-spacing: .12em; text-transform: uppercase; color: var(--oro-300); }
+  .perfil h3 { margin-top: 12px; font-size: 1.5rem; }
+  .perfil p { margin-top: 10px; color: rgba(255,255,255,.72); font-size: .98rem; }
+  .perfil ul { margin: 18px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; font-size: .95rem; color: rgba(255,255,255,.88); }
+  .perfil li { display: flex; gap: 10px; }
+  .perfil li svg.i { width: 18px; height: 18px; color: var(--oro-400); margin-top: 4px; }
+  @media (max-width: 860px) { .perfiles { grid-template-columns: 1fr; } }
+
+  /* Galería */
+  .galeria { display: grid; grid-template-columns: repeat(6, 1fr); gap: 16px; }
+  .galeria figure { margin: 0; grid-column: span 3; }
+  .galeria figure.ancha { grid-column: span 4; }
+  .galeria figure.angosta { grid-column: span 2; }
+  .galeria figure.tercio { grid-column: span 2; }
+  .galeria button { all: unset; cursor: zoom-in; display: block; width: 100%; border-radius: 16px; overflow: hidden; background: #fff; border: 1px solid var(--linea); box-shadow: var(--sombra); transition: transform .25s; }
+  .galeria button:hover { transform: translateY(-3px); }
+  .galeria button:focus-visible { outline: 3px solid var(--oro-500); outline-offset: 3px; }
+  .galeria img { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top left; }
+  .galeria figure.angosta img { aspect-ratio: 377 / 488; object-fit: cover; object-position: top; }
+  .galeria figure.angosta img.abajo { object-position: center 78%; }
+  .galeria figcaption { margin-top: 12px; font-size: .95rem; color: var(--tinta-2); line-height: 1.45; }
+  .galeria figcaption b { color: var(--tinta); }
+  @media (max-width: 860px) { .galeria { grid-template-columns: 1fr; } .galeria figure, .galeria figure.ancha, .galeria figure.tercio, .galeria figure.angosta { grid-column: auto; } .galeria figure.angosta button { max-width: 280px; margin-inline: auto; } .galeria figure.angosta figcaption { text-align: center; } }
+  .aviso-demo { margin-top: 28px; font-size: .88rem; color: var(--tinta-2); display: flex; gap: 8px; align-items: center; }
+  .aviso-demo svg.i { width: 18px; height: 18px; }
+
+  /* Visor de imágenes */
+  dialog.visor { border: 0; padding: 0; background: transparent; max-width: min(1280px, 96vw); max-height: 94vh; }
+  dialog.visor::backdrop { background: rgba(14,10,7,.86); }
+  dialog.visor img { max-height: 84vh; width: auto; margin: 0 auto; border-radius: 12px; }
+  dialog.visor p { color: #fff; text-align: center; margin-top: 12px; font-size: .95rem; }
+  dialog.visor button { position: fixed; top: 16px; right: 16px; width: 48px; height: 48px; border-radius: 50%; border: 0; background: rgba(255,255,255,.14); color: #fff; cursor: pointer; display: grid; place-items: center; }
+
+  /* ---------- Futuro ---------- */
+  .futuro { background: radial-gradient(1200px 600px at 80% -10%, rgba(196,132,63,.22), transparent 60%), var(--cafe-950); color: #fff; }
+  .pronto { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; padding: 8px 14px; border-radius: 999px; background: rgba(196,132,63,.16); color: var(--oro-300); font-size: .9rem; font-weight: 600; border: 1px dashed rgba(223,182,127,.5); }
+  .telefonos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 48px 24px; justify-items: center; margin-top: 16px; }
+  .tel-item { display: flex; flex-direction: column; align-items: center; max-width: 280px; }
+  .tel-item figcaption { margin-top: 18px; text-align: center; font-size: .95rem; color: rgba(255,255,255,.75); line-height: 1.45; }
+  .tel-item figcaption b { display: block; color: #fff; font-size: 1.02rem; margin-bottom: 2px; }
+  @media (max-width: 900px) {
+    .telefonos { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 8px 16px 24px; margin-inline: -16px; scrollbar-width: none; }
+    .telefonos::-webkit-scrollbar { display: none; }
+    .tel-item { scroll-snap-align: center; flex: none; }
+  }
+  .desliza { display: none; font-size: .85rem; color: rgba(255,255,255,.55); margin-top: 4px; }
+  @media (max-width: 900px) { .desliza { display: block; } }
+
+  .tel { width: 250px; aspect-ratio: 9 / 19.2; padding: 10px; border-radius: 40px; background: linear-gradient(145deg, #3a3a3c, #0d0d0e); box-shadow: 0 30px 60px -20px rgba(0,0,0,.7), inset 0 0 0 1.5px rgba(255,255,255,.12); position: relative; }
+  .pantalla { position: relative; height: 100%; border-radius: 31px; overflow: hidden; background: var(--papel); color: var(--tinta); font-size: 12px; line-height: 1.35; display: flex; flex-direction: column; }
+  .pantalla::before { content: ""; position: absolute; top: 9px; left: 50%; transform: translateX(-50%); width: 76px; height: 20px; border-radius: 999px; background: #000; z-index: 5; }
+  .barra { display: flex; justify-content: space-between; padding: 11px 20px 0; height: 36px; font-size: 11px; font-weight: 600; flex: none; }
+  .barra i { font-style: normal; letter-spacing: 1px; }
+  .app-cab { padding: 10px 16px 12px; flex: none; }
+  .app-cab small { display: block; color: var(--tinta-2); font-size: 10.5px; }
+  .app-cab b { display: block; font-size: 16px; font-family: var(--serif); }
+  .app-cuerpo { flex: 1; padding: 0 12px; display: flex; flex-direction: column; gap: 9px; overflow: hidden; }
+  .tarjeta { background: #fff; border-radius: 14px; padding: 10px 12px; border: 1px solid var(--linea); }
+  .tarjeta small { display: block; color: var(--tinta-2); font-size: 10px; text-transform: uppercase; letter-spacing: .06em; font-weight: 600; }
+  .tarjeta b { display: block; font-size: 12.5px; margin-top: 2px; }
+  .tarjeta span { display: block; color: var(--tinta-2); font-size: 11px; }
+  .nav-app { display: flex; justify-content: space-around; padding: 9px 6px 14px; background: #fff; border-top: 1px solid var(--linea); flex: none; }
+  .nav-app span { display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 9.5px; color: var(--tinta-2); }
+  .nav-app span.on { color: var(--cafe-700); font-weight: 600; }
+  .nav-app svg.i { width: 18px; height: 18px; }
+
+  /* Pantalla bloqueada */
+  .bloqueo { background: linear-gradient(170deg, #4a3220 0%, #1b120b 70%); color: #fff; }
+  .bloqueo .barra { color: #fff; }
+  .hora { text-align: center; margin-top: 18px; }
+  .hora b { display: block; font: 600 52px/1 var(--sans); letter-spacing: -.02em; }
+  .hora span { font-size: 12px; opacity: .8; }
+  .notis { padding: 22px 10px 0; display: grid; gap: 8px; }
+  .noti { background: rgba(255,255,255,.16); backdrop-filter: blur(12px); border-radius: 16px; padding: 10px 11px; display: grid; grid-template-columns: 26px 1fr; gap: 9px; animation: entra 6s ease-in-out infinite; }
+  .noti:nth-child(2) { animation-delay: .4s; }
+  .noti img { width: 26px; height: 26px; border-radius: 7px; background: #fff; }
+  .noti small { display: flex; justify-content: space-between; font-size: 9.5px; opacity: .75; }
+  .noti b { display: block; font-size: 11.5px; margin-top: 1px; }
+  .noti p { font-size: 11px; opacity: .9; margin-top: 1px; }
+  .noti.urgente { background: rgba(212,60,50,.85); }
+  @keyframes entra { 0%, 6% { opacity: 0; transform: translateY(-10px); } 12%, 92% { opacity: 1; transform: none; } 100% { opacity: 1; } }
+  .linterna { position: absolute; bottom: 20px; left: 0; right: 0; display: flex; justify-content: space-between; padding: 0 26px; }
+  .linterna span { width: 40px; height: 40px; border-radius: 50%; background: rgba(255,255,255,.15); display: grid; place-items: center; }
+  .linterna svg.i { width: 18px; height: 18px; }
+
+  /* Inicio rondero */
+  .boton-alerta { margin: 4px auto 2px; width: 138px; height: 138px; border-radius: 50%; background: radial-gradient(circle at 35% 30%, #ef5a4f, #b5271f); color: #fff; display: grid; place-items: center; text-align: center; box-shadow: 0 0 0 10px rgba(212,60,50,.14), 0 0 0 22px rgba(212,60,50,.07), 0 12px 24px -6px rgba(181,39,31,.6); animation: late 2.4s ease-in-out infinite; }
+  .boton-alerta b { font-size: 15px; letter-spacing: .04em; line-height: 1.15; }
+  .boton-alerta svg.i { display: block; width: 30px; height: 30px; margin: 0 auto 4px; stroke-width: 2.2; }
+  @keyframes late { 0%, 100% { box-shadow: 0 0 0 10px rgba(212,60,50,.14), 0 0 0 22px rgba(212,60,50,.07), 0 12px 24px -6px rgba(181,39,31,.6); } 50% { box-shadow: 0 0 0 14px rgba(212,60,50,.18), 0 0 0 30px rgba(212,60,50,.06), 0 12px 24px -6px rgba(181,39,31,.6); } }
+  .pista { text-align: center; font-size: 10.5px; color: var(--tinta-2); margin: 10px 0 2px; }
+  .fila-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .barra-prog { height: 5px; border-radius: 9px; background: var(--crema-100); margin-top: 6px; overflow: hidden; }
+  .barra-prog i { display: block; height: 100%; width: 92%; background: var(--verde); border-radius: 9px; }
+
+  /* Enviar alerta */
+  .tipos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .tipo { background: #fff; border: 1.5px solid var(--linea); border-radius: 12px; padding: 9px 4px; text-align: center; font-size: 10.5px; font-weight: 600; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+  .tipo svg.i { width: 20px; height: 20px; color: var(--cafe-700); }
+  .tipo.sel { border-color: var(--rojo); background: #fdecea; color: #9d231b; }
+  .tipo.sel svg.i { color: var(--rojo); }
+  .mini-mapa { height: 86px; border-radius: 12px; position: relative; overflow: hidden; background:
+      linear-gradient(115deg, transparent 46%, #f3d9a8 46%, #f3d9a8 52%, transparent 52%),
+      linear-gradient(20deg, transparent 60%, #bfdcf0 60%, #bfdcf0 66%, transparent 66%),
+      repeating-linear-gradient(0deg, rgba(0,0,0,.04) 0 1px, transparent 1px 16px),
+      repeating-linear-gradient(90deg, rgba(0,0,0,.04) 0 1px, transparent 1px 16px), #e5efd8; border: 1px solid var(--linea); }
+  .pin { position: absolute; width: 22px; height: 22px; color: var(--rojo); transform: translate(-50%, -100%); }
+  .pin svg.i { width: 22px; height: 22px; fill: currentColor; stroke: #fff; stroke-width: 1.5; }
+  .gps { position: absolute; left: 8px; bottom: 7px; background: #fff; border-radius: 999px; padding: 3px 8px; font-size: 9.5px; font-weight: 600; color: var(--verde); display: flex; gap: 4px; align-items: center; }
+  .gps svg.i { width: 11px; height: 11px; stroke-width: 3; }
+  .campo { background: #fff; border: 1px solid var(--linea); border-radius: 10px; padding: 9px 10px; color: #9a8d82; font-size: 11px; }
+  .btn-app { margin-top: auto; margin-bottom: 14px; background: var(--rojo); color: #fff; text-align: center; font-weight: 700; font-size: 13px; padding: 12px; border-radius: 12px; }
+
+  /* Presidente */
+  .mapa-grande { height: 128px; }
+  .alerta-item { background: #fff; border: 1px solid var(--linea); border-left: 4px solid var(--rojo); border-radius: 12px; padding: 9px 10px; }
+  .alerta-item.atencion { border-left-color: var(--ambar); }
+  .alerta-item .top { display: flex; justify-content: space-between; align-items: center; }
+  .alerta-item b { font-size: 12px; }
+  .chip { font-size: 9px; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: #fdecea; color: #9d231b; }
+  .chip.amb { background: #fdf3dc; color: #8a5d00; }
+  .alerta-item span { display: block; font-size: 10.5px; color: var(--tinta-2); margin-top: 2px; }
+  .acciones { display: flex; gap: 6px; margin-top: 8px; }
+  .acciones i { font-style: normal; flex: 1; text-align: center; font-size: 10.5px; font-weight: 600; padding: 6px; border-radius: 8px; border: 1px solid var(--linea); }
+  .acciones i.pri { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+
+  /* Escáner */
+  .camara { background: #0e0c0a; color: #fff; }
+  .camara .barra { color: #fff; }
+  .visor-qr { flex: 1; position: relative; display: grid; place-items: center; background: radial-gradient(circle at 50% 45%, #3b3631, #0e0c0a 75%); }
+  .marco { position: relative; width: 150px; height: 150px; }
+  .marco::before, .marco::after { content: ""; position: absolute; inset: 0; border: 3px solid var(--oro-400); border-radius: 18px; -webkit-mask: linear-gradient(#000 0 0) top/100% 26px no-repeat, linear-gradient(#000 0 0) bottom/100% 26px no-repeat; mask: linear-gradient(#000 0 0) top/100% 26px no-repeat, linear-gradient(#000 0 0) bottom/100% 26px no-repeat; }
+  .marco::after { -webkit-mask: linear-gradient(#000 0 0) left/26px 100% no-repeat, linear-gradient(#000 0 0) right/26px 100% no-repeat; mask: linear-gradient(#000 0 0) left/26px 100% no-repeat, linear-gradient(#000 0 0) right/26px 100% no-repeat; }
+  .marco img { position: absolute; inset: 18px; width: calc(100% - 36px); height: calc(100% - 36px); object-fit: cover; object-position: 8% 36%; border-radius: 4px; transform: rotate(-6deg); filter: grayscale(1) contrast(1.2); }
+  .laser { position: absolute; left: 12px; right: 12px; height: 2px; background: var(--oro-400); box-shadow: 0 0 12px 2px rgba(211,156,92,.8); animation: barre 2.2s ease-in-out infinite; }
+  @keyframes barre { 0%, 100% { top: 14px; } 50% { top: calc(100% - 16px); } }
+  .toast { position: absolute; left: 12px; right: 12px; bottom: 14px; background: var(--verde); border-radius: 14px; padding: 10px 12px; display: flex; gap: 10px; align-items: center; animation: entra 4s ease-in-out infinite; }
+  .toast svg.i { width: 22px; height: 22px; stroke-width: 2.6; background: rgba(255,255,255,.2); border-radius: 50%; padding: 3px; }
+  .toast b { display: block; font-size: 12px; }
+  .toast span { font-size: 10.5px; opacity: .9; }
+  .contador { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px 16px; background: #1b1714; flex: none; }
+  .contador b { font-size: 18px; }
+  .contador span { font-size: 10.5px; color: rgba(255,255,255,.65); }
+  .contador i { font-style: normal; font-size: 11px; font-weight: 600; padding: 7px 12px; border-radius: 999px; background: rgba(255,255,255,.12); }
+
+  /* Carnet digital */
+  .carnet-dig { background: linear-gradient(180deg, var(--cafe-800) 0 46%, var(--papel) 46%); }
+  .carnet-dig .barra { color: #fff; }
+  .carnet-dig .app-cab { color: #fff; }
+  .carnet-dig .app-cab small { color: var(--oro-300); }
+  .tarjeta-qr { background: #fff; border-radius: 18px; padding: 14px; text-align: center; box-shadow: 0 14px 30px -12px rgba(35,26,19,.45); }
+  .tarjeta-qr .qr-img { width: 150px; height: 150px; margin: 0 auto; padding: 8px; border-radius: 12px; border: 2px solid var(--oro-400); background: #fff; }
+  .tarjeta-qr .qr-img img, .tarjeta-qr .qr-img canvas { width: 100% !important; height: 100% !important; }
+  .tarjeta-qr b { display: block; margin-top: 10px; font-size: 13px; }
+  .tarjeta-qr span { display: block; color: var(--tinta-2); font-size: 10.5px; }
+  .estado-ok { display: inline-flex; margin-top: 8px; font-size: 10px; font-weight: 700; color: #fff; background: var(--verde); border-radius: 999px; padding: 3px 10px; }
+
+  /* Cómo llega un aviso */
+  .aviso-flujo { margin-top: 88px; padding: clamp(24px, 4vw, 44px); border-radius: 28px; background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.1); }
+  .aviso-flujo h3 { font-size: clamp(1.4rem, 2.6vw, 1.9rem); }
+  .aviso-flujo > p { margin-top: 10px; color: rgba(255,255,255,.72); max-width: 70ch; }
+  .cadena { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-top: 32px; position: relative; }
+  .eslabon { position: relative; padding: 22px 18px; border-radius: 20px; background: rgba(255,255,255,.06); text-align: center; }
+  .eslabon .ico { width: 56px; height: 56px; margin: 0 auto; border-radius: 50%; display: grid; place-items: center; background: var(--oro-500); color: var(--cafe-950); }
+  .eslabon b { display: block; margin-top: 14px; font-size: 1.02rem; }
+  .eslabon span { display: block; margin-top: 6px; font-size: .9rem; color: rgba(255,255,255,.7); line-height: 1.45; }
+  .eslabon:not(:last-child)::after { content: "→"; position: absolute; right: -14px; top: 42px; width: 14px; text-align: center; color: var(--oro-300); font-weight: 700; }
+  @media (max-width: 860px) { .cadena { grid-template-columns: 1fr; } .eslabon:not(:last-child)::after { content: "↓"; right: auto; left: 0; width: 100%; top: auto; bottom: -19px; } }
+  .extras { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-top: 28px; }
+  .extra { display: flex; gap: 14px; padding: 18px; border-radius: 18px; border: 1px dashed rgba(223,182,127,.35); }
+  .extra svg.i { color: var(--oro-300); margin-top: 2px; }
+  .extra b { display: block; font-size: 1rem; }
+  .extra span { display: block; margin-top: 2px; font-size: .9rem; color: rgba(255,255,255,.7); line-height: 1.45; }
+
+  /* ---------- Qué se necesita ---------- */
+  .requisitos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  @media (max-width: 1100px) { .requisitos { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 620px) { .requisitos { grid-template-columns: 1fr; } }
+  .req { display: flex; flex-direction: column; padding: 26px; background: #fff; border-radius: var(--radio); border: 1px solid var(--linea); }
+  .req .top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .req .ico { width: 50px; height: 50px; border-radius: 15px; display: grid; place-items: center; background: var(--cafe-900); color: var(--oro-300); }
+  .costo { font-size: .78rem; font-weight: 700; padding: 6px 11px; border-radius: 999px; background: var(--crema-100); color: var(--cafe-700); white-space: nowrap; }
+  .costo.gratis { background: #e6f6ef; color: #146c4c; }
+  .costo.opcional { background: #eef0f3; color: #4b5563; }
+  .req h3 { margin-top: 18px; font-size: 1.2rem; }
+  .req dl { margin: 12px 0 0; display: grid; gap: 10px; }
+  .req dt { font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cafe-600); }
+  .req dd { margin: 2px 0 0; font-size: .96rem; color: var(--tinta-2); line-height: 1.5; }
+  .llamado { margin-top: 48px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; padding: clamp(28px, 5vw, 52px); border-radius: 32px; background: linear-gradient(135deg, var(--cafe-800), var(--cafe-950)); color: #fff; position: relative; overflow: hidden; }
+  .llamado::after { content: ""; position: absolute; right: -80px; top: -80px; width: 300px; height: 300px; border-radius: 50%; background: url("img/logo.png") center / cover; opacity: .08; }
+  .llamado h3 { font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
+  .llamado h3 em { color: var(--oro-300); }
+  .llamado > div > p { margin-top: 14px; color: rgba(255,255,255,.78); }
+  .llamado ol { margin: 0; padding: 0; list-style: none; display: grid; gap: 12px; counter-reset: ap; position: relative; z-index: 1; }
+  .llamado li { counter-increment: ap; display: flex; gap: 14px; align-items: flex-start; padding: 14px 16px; border-radius: 16px; background: rgba(255,255,255,.07); }
+  .llamado li::before { content: counter(ap); flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; background: var(--oro-500); color: var(--cafe-950); font: 700 .95rem/1 var(--serif); }
+  .llamado li span { font-size: .98rem; line-height: 1.45; }
+  @media (max-width: 860px) { .llamado { grid-template-columns: 1fr; } }
+
+  /* ---------- Hoja de ruta ---------- */
+  .ruta { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; position: relative; }
+  .ruta::before { content: ""; position: absolute; top: 23px; left: 24px; right: calc(25% - 20px); height: 3px; background: linear-gradient(90deg, var(--verde) 0 22%, var(--oro-300) 22%); border-radius: 3px; }
+  .fase { position: relative; }
+  .fase .punto { position: relative; width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; background: #fff; border: 3px solid var(--oro-300); color: var(--cafe-700); font: 700 1.1rem/1 var(--serif); }
+  .fase.hecha .punto { background: var(--verde); border-color: var(--verde); color: #fff; }
+  .fase .punto svg.i { stroke-width: 3; }
+  .fase small { display: block; margin-top: 18px; font-size: .76rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--cafe-600); }
+  .fase.hecha small { color: var(--verde); }
+  .fase h3 { margin-top: 6px; font-size: 1.25rem; }
+  .fase p { margin-top: 8px; font-size: .95rem; color: var(--tinta-2); line-height: 1.5; }
+  @media (max-width: 860px) {
+    .ruta { grid-template-columns: 1fr; gap: 28px; }
+    .ruta::before { top: 24px; bottom: 24px; left: 23px; right: auto; width: 3px; height: auto; background: linear-gradient(180deg, var(--verde) 0 22%, var(--oro-300) 22%); }
+    .fase { display: grid; grid-template-columns: 48px 1fr; column-gap: 18px; }
+    .fase .punto { grid-row: span 3; }
+    .fase small { margin-top: 4px; }
+  }
+
+  /* ---------- Tecnología ---------- */
+  .tec { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .chips { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .chip-tec { padding: 18px; border-radius: 18px; background: #fff; border: 1px solid var(--linea); }
+  .chip-tec b { display: block; font-size: 1.02rem; }
+  .chip-tec span { display: block; margin-top: 4px; font-size: .9rem; color: var(--tinta-2); line-height: 1.45; }
+  .chip-tec.futuro-chip { border-style: dashed; background: transparent; }
+  .seguridad { list-style: none; margin: 24px 0 0; padding: 0; display: grid; gap: 14px; }
+  .seguridad li { display: flex; gap: 14px; }
+  .seguridad .ico { width: 42px; height: 42px; border-radius: 12px; display: grid; place-items: center; background: var(--crema-100); color: var(--cafe-700); flex: none; }
+  .seguridad b { display: block; }
+  .seguridad span { display: block; font-size: .95rem; color: var(--tinta-2); line-height: 1.5; }
+  @media (max-width: 860px) { .tec { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { .chips { grid-template-columns: 1fr; } }
+
+  /* ---------- Cierre ---------- */
+  .cierre { background: var(--cafe-950); color: #fff; padding: 80px 0 40px; }
+  .cierre-grid { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; align-items: center; }
+  .cierre h2 { font-size: clamp(1.9rem, 4vw, 2.8rem); }
+  .cierre h2 em { color: var(--oro-300); }
+  .cierre-grid > div > p { margin-top: 16px; color: rgba(255,255,255,.75); max-width: 56ch; }
+  .equipo { margin-top: 28px; display: grid; gap: 6px; font-size: .98rem; color: rgba(255,255,255,.85); }
+  .equipo b { color: var(--oro-300); font-weight: 600; }
+  .qr-caja { justify-self: end; background: #fff; color: var(--tinta); border-radius: 24px; padding: 22px; text-align: center; width: 260px; }
+  .qr-caja #qr { width: 200px; height: 200px; margin: 0 auto; display: grid; place-items: center; }
+  .qr-caja #qr img, .qr-caja #qr canvas { width: 200px !important; height: 200px !important; }
+  .qr-caja b { display: block; margin-top: 14px; font-size: 1rem; }
+  .qr-caja span { display: block; font-size: .85rem; color: var(--tinta-2); }
+  @media (max-width: 760px) { .cierre-grid { grid-template-columns: 1fr; } .qr-caja { justify-self: start; } }
+  .pie { margin-top: 64px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.1); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 12px; font-size: .85rem; color: rgba(255,255,255,.55); }
+
+  /* ---------- Animación al aparecer ---------- */
+  .js .aparece { opacity: 0; transform: translateY(22px); transition: opacity .7s ease, transform .7s ease; }
+  .js .aparece.visto { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .js .aparece { opacity: 1; transform: none; transition: none; }
+    *, *::before, *::after { animation: none !important; }
+  }
+
+  /* ---------- Impresión (boletín en A4) ---------- */
+  @media print {
+    @page { size: A4; margin: 14mm; }
+    body { font-size: 11pt; background: #fff; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .menu, .botones, dialog, .desliza { display: none !important; }
+    .js .aparece { opacity: 1 !important; transform: none !important; }
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+    section, .cierre { padding: 28px 0; break-inside: auto; }
+    .portada { min-height: auto; }
+    .portada .contenedor { padding: 40px 0; }
+    #futuro, #necesita, #ruta, #galeria { break-before: page; }
+    .funcion, .problema, .req, .perfil, .flujo, .tel-item, .galeria figure, .fase, .eslabon, .llamado li { break-inside: avoid; }
+    .telefonos { display: grid !important; grid-template-columns: repeat(3, 1fr); gap: 20px 12px; overflow: visible; padding: 0; margin: 0; }
+    .tel-item { max-width: none; }
+    .tel { width: 170px; padding: 7px; border-radius: 30px; }
+    .pantalla { border-radius: 24px; font-size: 10px; }
+    .desliza { display: none !important; }
+    .carnet-bloque, .carnets, .cabecera, .aviso-flujo, .llamado { break-inside: avoid; }
+    .funciones { grid-template-columns: repeat(3, 1fr); }
+    .funcion.doble { grid-column: auto; }
+    .perfiles { grid-template-columns: repeat(3, 1fr); }
+    .cadena { grid-template-columns: repeat(4, 1fr); }
+    .eslabon:not(:last-child)::after { content: "→"; right: -14px; left: auto; width: 14px; top: 42px; bottom: auto; }
+    .galeria { grid-template-columns: 1fr 1fr; }
+    .galeria figure, .galeria figure.ancha, .galeria figure.angosta { grid-column: auto; }
+    .galeria figure.angosta button { max-width: none; }
+    .galeria button { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Iconos (trazos simples, se reutilizan con <use>) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-cuaderno" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20V2H6.5A2.5 2.5 0 0 0 4 4.5z"/><path d="M4 19.5A2.5 2.5 0 0 0 6.5 22H20v-5"/></symbol>
+    <symbol id="i-carnet" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><circle cx="8" cy="11" r="2"/><path d="M5 16a3 3 0 0 1 6 0M14 10h5M14 14h4"/></symbol>
+    <symbol id="i-lapiz" viewBox="0 0 24 24"><path d="M17 3a2.85 2.85 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+    <symbol id="i-doc" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/></symbol>
+    <symbol id="i-grafico" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M18 17V9M13 17V5M8 17v-3"/></symbol>
+    <symbol id="i-alerta" viewBox="0 0 24 24"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4M12 17h.01"/></symbol>
+    <symbol id="i-usuarios" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="i-calendario" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></symbol>
+    <symbol id="i-qr" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM20 14v.01M14 20h.01M17 20h4v-3"/></symbol>
+    <symbol id="i-buscar" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="i-escudo" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></symbol>
+    <symbol id="i-capas" viewBox="0 0 24 24"><path d="m12 2 10 5-10 5L2 7z"/><path d="m2 17 10 5 10-5M2 12l10 5 10-5"/></symbol>
+    <symbol id="i-letra" viewBox="0 0 24 24"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></symbol>
+    <symbol id="i-celular" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></symbol>
+    <symbol id="i-campana" viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></symbol>
+    <symbol id="i-servidor" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="8" rx="2"/><rect x="2" y="14" width="20" height="8" rx="2"/><path d="M6 6h.01M6 18h.01"/></symbol>
+    <symbol id="i-candado" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></symbol>
+    <symbol id="i-mundo" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+    <symbol id="i-mensaje" viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></symbol>
+    <symbol id="i-birrete" viewBox="0 0 24 24"><path d="M22 10 12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></symbol>
+    <symbol id="i-pin" viewBox="0 0 24 24"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+    <symbol id="i-camara" viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></symbol>
+    <symbol id="i-impresora" viewBox="0 0 24 24"><path d="M6 9V2h12v7"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></symbol>
+    <symbol id="i-reloj" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></symbol>
+    <symbol id="i-sinred" viewBox="0 0 24 24"><path d="M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M2 8.82a15 15 0 0 1 4.17-2.65M10.66 5c4.01-.36 8.14.9 11.34 3.76M16.85 11.25a10 10 0 0 1 2.22 1.68M5 13a10 10 0 0 1 5.24-2.76M12 20h.01"/></symbol>
+    <symbol id="i-fuego" viewBox="0 0 24 24"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></symbol>
+    <symbol id="i-corazon" viewBox="0 0 24 24"><path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/></symbol>
+    <symbol id="i-rayo" viewBox="0 0 24 24"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></symbol>
+    <symbol id="i-casa" viewBox="0 0 24 24"><path d="m3 10 9-7 9 7v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path d="M9 22V12h6v10"/></symbol>
+    <symbol id="i-huella" viewBox="0 0 24 24"><circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/></symbol>
+    <symbol id="i-auto" viewBox="0 0 24 24"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9L18 10l-2.7-3.6A2 2 0 0 0 13.7 6H6.3a2 2 0 0 0-1.6.8L2 10.5V16c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/></symbol>
+    <symbol id="i-linterna" viewBox="0 0 24 24"><path d="M18 6c0 2-2 2-2 4v10a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2V10c0-2-2-2-2-4V2h12z"/><path d="M6 6h12M12 12v.01"/></symbol>
+    <symbol id="i-cerrar" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+    <symbol id="i-flecha" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+    <symbol id="i-balanza" viewBox="0 0 24 24"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1ZM2 16l3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10M12 3v18M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></symbol>
+  </defs>
+</svg>
+
+<header class="menu" id="menu">
+  <div class="contenedor">
+    <a class="marca" href="#inicio">
+      <img src="img/logo.png" alt="">
+      <span>Rondas Campesinas<small>Sistema de gestión digital</small></span>
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#problema">El problema</a>
+      <a href="#solucion">La solución</a>
+      <a href="#como">Cómo funciona</a>
+      <a href="#futuro">El futuro</a>
+      <a href="#necesita">Qué se necesita</a>
+      <a href="#ruta">Hoja de ruta</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ PORTADA ============ -->
+<section class="portada" id="inicio">
+  <div class="contenedor">
+    <span class="etiqueta">Boletín informativo</span>
+    <h1>Rondas Campesinas, <em>del cuaderno</em> a lo digital</h1>
+    <p class="bajada">Un sistema hecho para las rondas campesinas: ordena el padrón, emite carnets con código QR, toma asistencia en segundos, redacta las actas de justicia comunal y entrega reportes al instante. El siguiente paso es una app en el celular de cada rondero.</p>
+    <div class="botones">
+      <a class="btn btn-oro" href="#solucion">Conocer el proyecto <svg class="i"><use href="#i-flecha"/></svg></a>
+      <a class="btn btn-linea" href="#futuro">Ver lo que viene</a>
+    </div>
+    <div class="cifras">
+      <div><b>10+</b><span>funciones que ya trabajan hoy en el sistema web</span></div>
+      <div><b>3</b><span>niveles de acceso: distrito, base y rondero</span></div>
+      <div><b>Ley 27908</b><span>respeta la organización que reconoce la ley de rondas</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PROBLEMA ============ -->
+<section id="problema">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">El problema</span>
+      <h2>Las rondas cuidan a todos, pero trabajan con papel</h2>
+      <p>Hoy casi todo se anota a mano. Eso hace el trabajo lento y, peor aún, la información se pierde justo cuando más se necesita.</p>
+    </div>
+    <div class="problemas">
+      <div class="problema aparece"><div class="ico"><svg class="i"><use href="#i-cuaderno"/></svg></div><div><h3>Padrones en cuadernos</h3><p>Se mojan, se pierden o quedan desactualizados. Saber cuántos ronderos activos hay toma días.</p></div></div>
+      <div class="problema aparece"><div class="ico"><svg class="i"><use href="#i-carnet"/></svg></div><div><h3>Carnets hechos a mano</h3><p>Sin un formato único, fáciles de falsificar y difíciles de verificar.</p></div></div>
+      <div class="problema aparece"><div class="ico"><svg class="i"><use href="#i-reloj"/></svg></div><div><h3>Asistencia lenta</h3><p>Pasar lista a lápiz en cada patrullaje, asamblea o faena quita tiempo y genera reclamos.</p></div></div>
+      <div class="problema aparece"><div class="ico"><svg class="i"><use href="#i-lapiz"/></svg></div><div><h3>Actas escritas a mano</h3><p>Cada caso se redacta desde cero; los antecedentes de una persona no se encuentran.</p></div></div>
+      <div class="problema aparece"><div class="ico"><svg class="i"><use href="#i-grafico"/></svg></div><div><h3>Sin reportes</h3><p>Para informar a la central o a las autoridades hay que contar y sumar a mano.</p></div></div>
+      <div class="problema aparece"><div class="ico"><svg class="i"><use href="#i-alerta"/></svg></div><div><h3>Emergencias de boca en boca</h3><p>Un robo o abigeato se avisa por llamadas sueltas; la base se entera tarde.</p></div></div>
+    </div>
+    <div class="giro aparece">
+      <div class="ico"><svg class="i"><use href="#i-escudo"/></svg></div>
+      <p>Nuestra propuesta: <b>una sola plataforma</b> para toda la central distrital, sencilla de usar y pensada para personas que no son expertas en computadoras.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOLUCIÓN ============ -->
+<section id="solucion" class="crema">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">La solución · ya funciona</span>
+      <h2>Lo que el sistema hace hoy</h2>
+      <p>Todo esto ya está construido y probado en el sistema web. Se usa desde una computadora, una tablet o el navegador del celular.</p>
+    </div>
+    <div class="funciones">
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-usuarios"/></svg></div><h3>Padrón de ronderos</h3><p>Registro con foto, DNI y base. Nadie se borra: se da de baja y queda la historia.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-carnet"/></svg></div><h3>Carnet con código QR</h3><p>Listo para imprimir por ambas caras, con foto, datos, estado y firma del presidente.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-capas"/></svg></div><h3>Grupos por base</h3><p>Los ronderos se reparten en grupos (por apellido o a mano) para los turnos de patrullaje.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-calendario"/></svg></div><h3>Eventos y convocatorias</h3><p>Patrullajes, asambleas y faenas en un calendario; se convoca a todos, a un grupo o a una lista.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-qr"/></svg></div><h3>Asistencia con el QR</h3><p>Se escanea el carnet con la cámara o un lector y queda marcado “presente” con fecha y hora.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-balanza"/></svg></div><h3>Justicia comunal y actas</h3><p>Cada incidencia recibe su número de caso y genera un acta formal en Word o PDF, con espacio para firmas.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-buscar"/></svg></div><h3>Antecedentes por DNI</h3><p>En segundos se sabe si una persona ya estuvo involucrada en otros casos.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion aparece"><div class="ico"><svg class="i"><use href="#i-grafico"/></svg></div><h3>Reportes al instante</h3><p>Padrón, asistencia, incidencias y sanciones: se ven en pantalla y se imprimen o descargan en PDF o Excel.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion doble aparece"><div class="ico"><svg class="i"><use href="#i-alerta"/></svg></div><h3>Bandeja de alertas</h3><p>Las emergencias reportadas llegan a su base, que las atiende y deja constancia de quién y cuándo.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+      <article class="funcion doble aparece"><div class="ico"><svg class="i"><use href="#i-letra"/></svg></div><h3>Fácil para todos</h3><p>Letra grande, botones con icono y texto, colores con significado. Pensado para mayores de 40.</p><span class="listo"><svg class="i"><use href="#i-check"/></svg>Funcionando</span></article>
+    </div>
+
+    <div class="carnet-bloque">
+      <div class="aparece">
+        <span class="etiqueta" style="color:var(--cafe-600)">La pieza clave</span>
+        <h3 style="margin-top:14px">Un carnet que también sirve para pasar lista</h3>
+        <p>El carnet se genera automáticamente desde el padrón, del tamaño de una tarjeta. En el reverso lleva un código QR único de cada rondero.</p>
+        <ul>
+          <li><svg class="i"><use href="#i-check"/></svg><span>Se imprime por ambas caras, con la firma y sello del presidente de la base.</span></li>
+          <li><svg class="i"><use href="#i-check"/></svg><span>Solo se emite a ronderos activos: es difícil de falsificar.</span></li>
+          <li><svg class="i"><use href="#i-check"/></svg><span>En cada evento, el presidente lo escanea y la asistencia queda registrada al instante.</span></li>
+        </ul>
+      </div>
+      <div class="carnets aparece" aria-label="Carnet de rondero: anverso y reverso (datos de demostración)">
+        <img src="img/carnet-anverso.webp" alt="Anverso del carnet: foto, apellidos, nombres, DNI, grupo, base y estado activo" loading="lazy">
+        <img src="img/carnet-reverso.webp" alt="Reverso del carnet: código QR grande y espacio para la firma del presidente de la base" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CÓMO FUNCIONA ============ -->
+<section id="como">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">Cómo funciona</span>
+      <h2>Dos recorridos, paso a paso</h2>
+      <p>Así se ve el trabajo diario de una base con el sistema.</p>
+    </div>
+    <div class="flujos">
+      <div class="flujo aparece">
+        <h3><span>Organización</span> Del registro al reporte</h3>
+        <ol class="pasos">
+          <li><b>Se empadrona al rondero</b><small>Con su foto, DNI y base; queda activo.</small></li>
+          <li><b>Se imprime su carnet</b><small>Anverso con datos y reverso con su QR.</small></li>
+          <li><b>Se convoca un evento</b><small>Patrullaje, asamblea o faena, para todos o por grupo.</small></li>
+          <li><b>Se escanea el QR</b><small>Cada rondero que llega queda “presente”.</small></li>
+          <li><b>Sale el reporte</b><small>Asistencia por mes o por persona, en PDF o Excel.</small></li>
+        </ol>
+      </div>
+      <div class="flujo aparece">
+        <h3><span>Justicia comunal</span> Del hecho al acta</h3>
+        <ol class="pasos">
+          <li><b>Ocurre un hecho</b><small>Un robo, abigeato, agresión o conflicto de tierras.</small></li>
+          <li><b>Se registra la incidencia</b><small>Lugar, partes, descripción y resolución.</small></li>
+          <li><b>Se genera el acta</b><small>Redactada en lenguaje formal, con número de caso.</small></li>
+          <li><b>Se revisa y firma</b><small>Se corrige en pantalla y se imprime en Word o PDF.</small></li>
+          <li><b>Queda el historial</b><small>Consultable por DNI como antecedente.</small></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUIÉN LO USA ============ -->
+<section class="oscuro" id="quienes">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">Quién lo usa</span>
+      <h2>Cada uno ve lo que le corresponde</h2>
+      <p>Tres niveles de acceso, igual que la organización real de las rondas. Una base no puede ver los datos de otra.</p>
+    </div>
+    <div class="perfiles">
+      <article class="perfil aparece">
+        <span class="nivel">Nivel 1</span>
+        <h3>Administrador Distrital</h3>
+        <p>La central distrital: ve el panorama completo.</p>
+        <ul>
+          <li><svg class="i"><use href="#i-check"/></svg>Todas las bases y sus cifras</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Crea bases y usuarios</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Define qué puede hacer cada presidente</li>
+        </ul>
+      </article>
+      <article class="perfil aparece">
+        <span class="nivel">Nivel 2</span>
+        <h3>Presidente de Base</h3>
+        <p>Dirige su base en el día a día.</p>
+        <ul>
+          <li><svg class="i"><use href="#i-check"/></svg>Padrón, carnets y grupos</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Eventos y toma de asistencia</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Incidencias, actas y alertas</li>
+        </ul>
+      </article>
+      <article class="perfil aparece">
+        <span class="nivel">Nivel 3</span>
+        <h3>Rondero</h3>
+        <p>Ingresa con su DNI.</p>
+        <ul>
+          <li><svg class="i"><use href="#i-check"/></svg>Su carnet y su código QR</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Su historial de asistencia</li>
+          <li><svg class="i"><use href="#i-check"/></svg>Enviar alertas a su base</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GALERÍA ============ -->
+<section id="galeria">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">Así se ve</span>
+      <h2>Pantallas reales del sistema</h2>
+      <p>Capturas tomadas del sistema en funcionamiento. Toque cualquier imagen para verla en grande.</p>
+    </div>
+    <div class="galeria">
+      <figure class="ancha aparece"><button type="button" data-ver><img src="img/portada.webp" alt="Página de inicio pública del portal de Rondas Campesinas" loading="lazy"></button><figcaption><b>Portal público.</b> Presenta a la central y da acceso al sistema.</figcaption></figure>
+      <figure class="angosta aparece"><button type="button" data-ver><img src="img/micarnet-celular.webp" alt="Vista del rondero en el celular con su carnet y su código QR" loading="lazy"></button><figcaption><b>Vista del rondero</b> en el celular: su carnet y su QR.</figcaption></figure>
+      <figure class="aparece"><button type="button" data-ver><img src="img/panel.webp" alt="Panel de inicio con ronderos por base, asistencia del mes, incidencias y próximos eventos" loading="lazy"></button><figcaption><b>Panel de inicio.</b> Las cifras del mes en una sola mirada.</figcaption></figure>
+      <figure class="aparece"><button type="button" data-ver><img src="img/padron.webp" alt="Padrón de ronderos con base, grupo, fecha de ingreso y estado" loading="lazy"></button><figcaption><b>Padrón de ronderos.</b> Búsqueda por nombre o DNI, grupo y estado.</figcaption></figure>
+      <figure class="aparece"><button type="button" data-ver><img src="img/asistencia.webp" alt="Toma de asistencia de un patrullaje con botones Presente, Falta y Justificado" loading="lazy"></button><figcaption><b>Toma de asistencia.</b> Botones grandes y escaneo del carnet.</figcaption></figure>
+      <figure class="aparece"><button type="button" data-ver><img src="img/acta.webp" alt="Editor del acta de justicia comunal con texto formal" loading="lazy"></button><figcaption><b>Acta de justicia comunal.</b> Se genera sola y se edita antes de imprimir.</figcaption></figure>
+      <figure class="ancha aparece"><button type="button" data-ver><img src="img/reportes.webp" alt="Reporte del padrón general mostrado en pantalla con botones Imprimir, PDF y Excel" loading="lazy"></button><figcaption><b>Reportes.</b> Se ven en pantalla y luego se imprimen o descargan.</figcaption></figure>
+      <figure class="angosta aparece"><button type="button" data-ver><img class="abajo" src="img/asistencia-celular.webp" alt="Escaneo del código QR del carnet con la cámara del celular" loading="lazy"></button><figcaption><b>Escaneo con la cámara</b> del celular.</figcaption></figure>
+      <figure class="aparece" style="grid-column:1 / -1"><button type="button" data-ver><img src="img/alertas.webp" alt="Bandeja de alertas con una alerta de robo pendiente y botones Atender y Atendida" loading="lazy" style="aspect-ratio:16/7"></button><figcaption><b>Bandeja de alertas.</b> La base atiende cada aviso y queda registrado quién lo atendió.</figcaption></figure>
+    </div>
+    <p class="aviso-demo"><svg class="i"><use href="#i-info"/></svg>Todas las capturas usan datos de demostración; no muestran personas reales.</p>
+  </div>
+</section>
+
+<!-- ============ FUTURO ============ -->
+<section class="futuro" id="futuro">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">El futuro · con su apoyo</span>
+      <h2>La ronda en el bolsillo de cada rondero</h2>
+      <p>La segunda etapa es una <b>aplicación para celulares Android</b>, conectada al mismo sistema. El rondero podrá pedir ayuda con un solo botón y toda su base recibirá el aviso al instante, aunque tenga el celular guardado.</p>
+      <span class="pronto"><svg class="i" style="width:18px;height:18px"><use href="#i-reloj"/></svg>Próximamente · estas pantallas son el diseño propuesto</span>
+    </div>
+
+    <p class="desliza">Desliza para ver más pantallas →</p>
+    <div class="telefonos">
+
+      <figure class="tel-item aparece">
+        <div class="tel"><div class="pantalla bloqueo">
+          <div class="barra"><span>21:47</span><i>▪▪▪ 4G</i></div>
+          <div class="hora"><b>21:47</b><span>martes, 24 de noviembre</span></div>
+          <div class="notis">
+            <div class="noti urgente"><img src="img/logo.png" alt=""><div><small><span>RONDAS · ALERTA</span><span>ahora</span></small><b>Abigeato en Sector Alto</b><p>Se llevan ganado cerca del puente. Base Central, acudir.</p></div></div>
+            <div class="noti"><img src="img/logo.png" alt=""><div><small><span>RONDAS</span><span>18:00</span></small><b>Recordatorio: patrullaje</b><p>Mañana 8:00 a. m. · Grupo 1. No olvides tu carnet.</p></div></div>
+          </div>
+          <div class="linterna"><span><svg class="i"><use href="#i-linterna"/></svg></span><span><svg class="i"><use href="#i-camara"/></svg></span></div>
+        </div></div>
+        <figcaption><b>Avisos al instante</b>Suenan aunque el celular esté bloqueado o la app cerrada.</figcaption>
+      </figure>
+
+      <figure class="tel-item aparece">
+        <div class="tel"><div class="pantalla">
+          <div class="barra"><span>9:41</span><i>▪▪▪ 4G</i></div>
+          <div class="app-cab"><small>Base Central La Primavera · Grupo 1</small><b>Hola, Pedro</b></div>
+          <div class="app-cuerpo">
+            <div class="boton-alerta"><div><svg class="i"><use href="#i-alerta"/></svg><b>ENVIAR<br>ALERTA</b></div></div>
+            <p class="pista">Mantén presionado 2 segundos</p>
+            <div class="tarjeta"><small>Próximo evento</small><b>Patrullaje semanal</b><span>Mié 25 · 8:00 a. m. · Grupo 1</span></div>
+            <div class="fila-2">
+              <div class="tarjeta"><small>Asistencia</small><b>92 %</b><div class="barra-prog"><i></i></div></div>
+              <div class="tarjeta"><small>Carnet</small><b style="color:var(--verde)">Activo</b><span>Ver QR</span></div>
+            </div>
+          </div>
+          <div class="nav-app">
+            <span class="on"><svg class="i"><use href="#i-casa"/></svg>Inicio</span>
+            <span><svg class="i"><use href="#i-carnet"/></svg>Carnet</span>
+            <span><svg class="i"><use href="#i-calendario"/></svg>Eventos</span>
+            <span><svg class="i"><use href="#i-campana"/></svg>Avisos</span>
+          </div>
+        </div></div>
+        <figcaption><b>Inicio del rondero</b>Un gran botón de alerta, su próximo turno y su asistencia.</figcaption>
+      </figure>
+
+      <figure class="tel-item aparece">
+        <div class="tel"><div class="pantalla">
+          <div class="barra"><span>9:42</span><i>▪▪▪ 4G</i></div>
+          <div class="app-cab"><small>Enviar alerta</small><b>¿Qué está pasando?</b></div>
+          <div class="app-cuerpo">
+            <div class="tipos">
+              <div class="tipo"><svg class="i"><use href="#i-candado"/></svg>Robo</div>
+              <div class="tipo sel"><svg class="i"><use href="#i-huella"/></svg>Abigeato</div>
+              <div class="tipo"><svg class="i"><use href="#i-fuego"/></svg>Incendio</div>
+              <div class="tipo"><svg class="i"><use href="#i-rayo"/></svg>Agresión</div>
+              <div class="tipo"><svg class="i"><use href="#i-auto"/></svg>Accidente</div>
+              <div class="tipo"><svg class="i"><use href="#i-corazon"/></svg>Salud</div>
+            </div>
+            <div class="mini-mapa"><span class="pin" style="left:58%;top:62%"><svg class="i"><use href="#i-pin"/></svg></span><span class="gps"><svg class="i"><use href="#i-check"/></svg>Ubicación detectada</span></div>
+            <div class="campo">Detalle (opcional): cuántos, hacia dónde…</div>
+            <div class="btn-app">Enviar a mi base</div>
+          </div>
+        </div></div>
+        <figcaption><b>Pedir ayuda en segundos</b>Elige qué pasa; la ubicación GPS se adjunta sola.</figcaption>
+      </figure>
+
+      <figure class="tel-item aparece">
+        <div class="tel"><div class="pantalla">
+          <div class="barra"><span>9:43</span><i>▪▪▪ 4G</i></div>
+          <div class="app-cab"><small>Presidente de base</small><b>Alertas de mi base</b></div>
+          <div class="app-cuerpo">
+            <div class="mini-mapa mapa-grande">
+              <span class="pin" style="left:62%;top:58%"><svg class="i"><use href="#i-pin"/></svg></span>
+              <span class="pin" style="left:28%;top:40%;color:var(--ambar)"><svg class="i"><use href="#i-pin"/></svg></span>
+            </div>
+            <div class="alerta-item"><div class="top"><b>Abigeato</b><span class="chip">PENDIENTE</span></div><span>Sector Alto · hace 2 min · Pedro C.</span><div class="acciones"><i>Llamar</i><i class="pri">Atender</i></div></div>
+            <div class="alerta-item atencion"><div class="top"><b>Persona sospechosa</b><span class="chip amb">EN ATENCIÓN</span></div><span>Plaza principal · hace 25 min</span></div>
+          </div>
+          <div class="nav-app">
+            <span><svg class="i"><use href="#i-casa"/></svg>Inicio</span>
+            <span class="on"><svg class="i"><use href="#i-alerta"/></svg>Alertas</span>
+            <span><svg class="i"><use href="#i-qr"/></svg>Asistencia</span>
+            <span><svg class="i"><use href="#i-usuarios"/></svg>Padrón</span>
+          </div>
+        </div></div>
+        <figcaption><b>El presidente responde</b>Ve en el mapa dónde ocurre y organiza a su gente.</figcaption>
+      </figure>
+
+      <figure class="tel-item aparece">
+        <div class="tel"><div class="pantalla camara">
+          <div class="barra"><span>8:05</span><i>▪▪▪ 4G</i></div>
+          <div class="visor-qr">
+            <div class="marco"><img src="img/carnet-reverso.webp" alt=""><span class="laser"></span></div>
+            <div class="toast"><svg class="i"><use href="#i-check"/></svg><div><b>Presente: Carmen Layme</b><span>Guardado 8:05 a. m.</span></div></div>
+          </div>
+          <div class="contador"><div><b>5</b> <span>de 7 marcados</span></div><i>Terminar</i></div>
+        </div></div>
+        <figcaption><b>Asistencia con la cámara</b>Apunta al carnet y listo: se guarda al instante.</figcaption>
+      </figure>
+
+      <figure class="tel-item aparece">
+        <div class="tel"><div class="pantalla carnet-dig">
+          <div class="barra"><span>9:44</span><i>▪▪▪ 4G</i></div>
+          <div class="app-cab"><small>Mi carnet</small><b>Pedro Condori Flores</b></div>
+          <div class="app-cuerpo">
+            <div class="tarjeta-qr">
+              <div class="qr-img" id="qrCarnet" aria-label="Código QR del carnet (demostración)"></div>
+              <b>DNI 70000003</b>
+              <span>Base Central La Primavera · Grupo 1</span>
+              <span class="estado-ok">ACTIVO</span>
+            </div>
+            <div class="tarjeta"><small>Mi asistencia</small><b>23 presentes · 2 faltas</b><span>Último: patrullaje del 20 de noviembre</span></div>
+          </div>
+          <div class="nav-app">
+            <span><svg class="i"><use href="#i-casa"/></svg>Inicio</span>
+            <span class="on"><svg class="i"><use href="#i-carnet"/></svg>Carnet</span>
+            <span><svg class="i"><use href="#i-calendario"/></svg>Eventos</span>
+            <span><svg class="i"><use href="#i-campana"/></svg>Avisos</span>
+          </div>
+        </div></div>
+        <figcaption><b>Carnet digital</b>Siempre a mano, aunque olvide el carnet impreso.</figcaption>
+      </figure>
+    </div>
+
+    <div class="aviso-flujo aparece">
+      <h3>¿Cómo llega un aviso al celular?</h3>
+      <p>Es el mismo mecanismo que usan WhatsApp o los bancos para sus notificaciones. Explicado en simple:</p>
+      <div class="cadena">
+        <div class="eslabon"><div class="ico"><svg class="i"><use href="#i-celular"/></svg></div><b>1. El rondero avisa</b><span>Presiona “Enviar alerta”; el celular manda el tipo y la ubicación.</span></div>
+        <div class="eslabon"><div class="ico"><svg class="i"><use href="#i-servidor"/></svg></div><b>2. El sistema la guarda</b><span>Queda registrada y el sistema decide a quién avisar: su base y la central.</span></div>
+        <div class="eslabon"><div class="ico"><svg class="i"><use href="#i-mundo"/></svg></div><b>3. Google la reparte</b><span>Un servicio gratuito de Google (Firebase) hace llegar el aviso a cada celular.</span></div>
+        <div class="eslabon"><div class="ico"><svg class="i"><use href="#i-campana"/></svg></div><b>4. Suenan los celulares</b><span>Con sonido fuerte, aunque estén bloqueados. Al tocarlo se abre la alerta.</span></div>
+      </div>
+      <div class="extras">
+        <div class="extra"><svg class="i"><use href="#i-campana"/></svg><div><b>Bandeja de avisos</b><span>Quien no tenía señal ve el aviso apenas se conecta.</span></div></div>
+        <div class="extra"><svg class="i"><use href="#i-calendario"/></svg><div><b>Recordatorios</b><span>Un día antes de cada patrullaje, asamblea o faena.</span></div></div>
+        <div class="extra"><svg class="i"><use href="#i-sinred"/></svg><div><b>Respaldo por SMS</b><span>Para caseríos sin datos móviles, en casos urgentes.</span></div></div>
+        <div class="extra"><svg class="i"><use href="#i-pin"/></svg><div><b>Mapa de alertas</b><span>Para ver dónde se concentran los hechos y prevenir.</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ QUÉ SE NECESITA ============ -->
+<section id="necesita" class="crema">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">Qué se necesita</span>
+      <h2>Lo que no es programación, pero hace falta</h2>
+      <p>El software ya está avanzado. Para que llegue al campo y funcione desde cualquier celular se necesitan algunas condiciones que dependen del apoyo institucional.</p>
+    </div>
+    <div class="requisitos">
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-servidor"/></svg></div><span class="costo">Costo bajo · mensual</span></div>
+        <h3>Servidor en internet</h3>
+        <dl><dt>Qué es</dt><dd>Una computadora en la nube que tiene el sistema encendido las 24 horas.</dd><dt>Para qué sirve</dt><dd>Hoy el sistema corre en una PC local. En internet, cualquier presidente o rondero puede entrar desde su caserío.</dd></dl>
+      </article>
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-candado"/></svg></div><span class="costo">Costo bajo · anual</span></div>
+        <h3>Dominio y conexión segura</h3>
+        <dl><dt>Qué es</dt><dd>Una dirección propia (por ejemplo, <i>rondas-distrito.pe</i>) con el “candado” de seguridad (https).</dd><dt>Para qué sirve</dt><dd>Protege los datos y es obligatorio para usar la cámara del celular y para la app.</dd></dl>
+      </article>
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-campana"/></svg></div><span class="costo gratis">Gratuito</span></div>
+        <h3>Cuenta de Firebase (Google)</h3>
+        <dl><dt>Qué es</dt><dd>El servicio de Google que entrega las notificaciones a los celulares.</dd><dt>Para qué sirve</dt><dd>Que las alertas y recordatorios suenen al instante, aunque la app esté cerrada.</dd></dl>
+      </article>
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-celular"/></svg></div><span class="costo">Pago único</span></div>
+        <h3>Publicación en Google Play</h3>
+        <dl><dt>Qué es</dt><dd>La cuenta de desarrollador para subir la app a la tienda de Android.</dd><dt>Para qué sirve</dt><dd>Que cualquier rondero la instale de forma segura y reciba las actualizaciones.</dd></dl>
+      </article>
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-qr"/></svg></div><span class="costo">Según el número de bases</span></div>
+        <h3>Celulares para los presidentes</h3>
+        <dl><dt>Qué es</dt><dd>Un celular Android sencillo, con cámara y plan de datos, por base.</dd><dt>Para qué sirve</dt><dd>Recibir alertas, tomar asistencia escaneando carnets y llevar su base desde el campo.</dd></dl>
+      </article>
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-impresora"/></svg></div><span class="costo">Según el número de ronderos</span></div>
+        <h3>Impresión de carnets</h3>
+        <dl><dt>Qué es</dt><dd>Impresión en tarjeta resistente (PVC o cartulina plastificada).</dd><dt>Para qué sirve</dt><dd>Un carnet oficial y duradero para cada rondero activo.</dd></dl>
+      </article>
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-birrete"/></svg></div><span class="costo">Apoyo logístico</span></div>
+        <h3>Capacitación</h3>
+        <dl><dt>Qué es</dt><dd>Talleres prácticos para presidentes de base y ronderos.</dd><dt>Para qué sirve</dt><dd>Que todos se sientan seguros usando el sistema desde el primer día.</dd></dl>
+      </article>
+      <article class="req aparece">
+        <div class="top"><div class="ico"><svg class="i"><use href="#i-mensaje"/></svg></div><span class="costo opcional">Opcional</span></div>
+        <h3>Mensajes SMS de respaldo</h3>
+        <dl><dt>Qué es</dt><dd>Un servicio que envía mensajes de texto comunes; se paga por mensaje.</dd><dt>Para qué sirve</dt><dd>Avisar emergencias en zonas donde no hay internet móvil.</dd></dl>
+      </article>
+    </div>
+
+    <div class="llamado aparece">
+      <div>
+        <h3>Con el apoyo de las autoridades, <em>la ronda se conecta</em></h3>
+        <p>No pedimos empezar en grande. Con un piloto en una sola base podemos demostrar resultados reales y luego extenderlo a todo el distrito.</p>
+      </div>
+      <ol>
+        <li><span><b>Respaldo institucional</b> para un piloto en una base comunal.</span></li>
+        <li><span><b>Financiar el servidor y el dominio</b> para tenerlo en internet.</span></li>
+        <li><span><b>Equipar a los presidentes</b> con un celular para su base.</span></li>
+        <li><span><b>Espacios para capacitar</b> y un convenio con la central de rondas o la municipalidad.</span></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<!-- ============ HOJA DE RUTA ============ -->
+<section id="ruta">
+  <div class="contenedor">
+    <div class="cabecera aparece">
+      <span class="etiqueta">Hoja de ruta</span>
+      <h2>Paso a paso, de la feria al distrito</h2>
+    </div>
+    <ol class="ruta">
+      <li class="fase hecha aparece"><span class="punto"><svg class="i"><use href="#i-check"/></svg></span><small>Fase 1 · Hecho</small><h3>Sistema web</h3><p>Padrón, carnets, eventos, asistencia, actas, reportes y alertas funcionando.</p></li>
+      <li class="fase aparece"><span class="punto">2</span><small>Fase 2 · Con apoyo</small><h3>Piloto en una base</h3><p>Publicar en internet, imprimir carnets y capacitar a una base comunal.</p></li>
+      <li class="fase aparece"><span class="punto">3</span><small>Fase 3 · Con apoyo</small><h3>App y notificaciones</h3><p>App Android para ronderos y presidentes, con alertas y avisos al instante.</p></li>
+      <li class="fase aparece"><span class="punto">4</span><small>Fase 4 · Con apoyo</small><h3>Todo el distrito</h3><p>Todas las bases conectadas y reportes consolidados para la central y las autoridades.</p></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ============ TECNOLOGÍA ============ -->
+<section id="tecnologia" class="crema">
+  <div class="contenedor">
+    <div class="tec">
+      <div class="aparece">
+        <span class="etiqueta" style="color:var(--cafe-600)">Para el jurado</span>
+        <h2 style="margin-top:14px">Cómo está construido</h2>
+        <p style="margin-top:16px;color:var(--tinta-2)">Usamos tecnologías profesionales, de uso libre y muy difundidas. La web y la futura app comparten el mismo “cerebro”, así que lo que se registra en una aparece en la otra.</p>
+        <ul class="seguridad">
+          <li><div class="ico"><svg class="i"><use href="#i-candado"/></svg></div><div><b>Contraseñas protegidas</b><span>Se guardan encriptadas; nadie puede leerlas, ni siquiera el administrador.</span></div></li>
+          <li><div class="ico"><svg class="i"><use href="#i-escudo"/></svg></div><div><b>Cada base ve solo lo suyo</b><span>El sistema lo controla en cada consulta, no solo en la pantalla.</span></div></li>
+          <li><div class="ico"><svg class="i"><use href="#i-doc"/></svg></div><div><b>Registro de accesos</b><span>Queda constancia de quién entró y quién registró cada dato.</span></div></li>
+        </ul>
+      </div>
+      <div class="chips aparece">
+        <div class="chip-tec"><b>Java · Spring Boot</b><span>El servidor: reglas, seguridad y documentos (PDF, Word, Excel).</span></div>
+        <div class="chip-tec"><b>React</b><span>El portal web: rápido, claro y adaptable al celular.</span></div>
+        <div class="chip-tec"><b>MySQL</b><span>La base de datos donde vive toda la información.</span></div>
+        <div class="chip-tec"><b>API segura (JWT)</b><span>La “puerta” única por la que entran la web y la app.</span></div>
+        <div class="chip-tec futuro-chip"><b>Kotlin · Android</b><span>La app móvil (próxima etapa).</span></div>
+        <div class="chip-tec futuro-chip"><b>Firebase</b><span>Notificaciones al instante (próxima etapa).</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- ============ CIERRE ============ -->
+<footer class="cierre" id="contacto">
+  <div class="contenedor">
+    <div class="cierre-grid">
+      <div class="aparece">
+        <h2>Organización, justicia y seguridad, <em>ahora también digitales</em></h2>
+        <p>Gracias por visitar nuestro proyecto.</p>
+        <!-- EDITAR: nombres del equipo, facultad, universidad y asesor -->
+        <div class="equipo">
+          <span><b>Equipo:</b> Jhoel Marrufo Delgado</span>
+          <span><b>Facultad:</b> Facultad de Ingeniería de Sistemas e Informática · UNSM</span>
+          <span><b>Asesor(a):</b> Ruíz Trigozo Elmer </span>
+        </div>
+      </div>
+      <div class="qr-caja aparece">
+        <div id="qr" aria-label="Código QR que abre este boletín"></div>
+        <b>Llévese este boletín</b>
+        <span>Escanee el código con su celular</span>
+      </div>
+    </div>
+    <div class="pie">
+      <span>Sistema de Gestión de Rondas Campesinas · FISI-2026</span>
+      <span>Capturas con datos de demostración</span>
+    </div>
+  </div>
+</footer>
+
+<dialog class="visor" id="visor" aria-label="Imagen ampliada">
+  <button type="button" id="cerrarVisor" aria-label="Cerrar"><svg class="i"><use href="#i-cerrar"/></svg></button>
+  <img id="visorImg" alt="">
+  <p id="visorTxt"></p>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  document.documentElement.classList.add('js');
+
+  // Menú: fondo sólido al bajar y sección activa
+  const menu = document.getElementById('menu');
+  const enlaces = [...document.querySelectorAll('.menu nav a')];
+  const alBajar = () => menu.classList.toggle('solido', window.scrollY > 40);
+  window.addEventListener('scroll', alBajar, { passive: true });
+  alBajar();
+
+  if ('IntersectionObserver' in window) {
+    // Aparición suave de los bloques
+    const io = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('visto'); io.unobserve(e.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    document.querySelectorAll('.aparece').forEach((el) => io.observe(el));
+
+    const secciones = enlaces.map((a) => document.querySelector(a.getAttribute('href')));
+    const so = new IntersectionObserver((entradas) => {
+      entradas.forEach((e) => {
+        if (e.isIntersecting) enlaces.forEach((a) => a.classList.toggle('activo', a.getAttribute('href') === '#' + e.target.id));
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+    secciones.forEach((s) => s && so.observe(s));
+  } else {
+    document.querySelectorAll('.aparece').forEach((el) => el.classList.add('visto'));
+  }
+  // Al imprimir, mostrar todo
+  window.addEventListener('beforeprint', () => document.querySelectorAll('.aparece').forEach((el) => el.classList.add('visto')));
+
+  // Visor de capturas
+  const visor = document.getElementById('visor');
+  const visorImg = document.getElementById('visorImg');
+  const visorTxt = document.getElementById('visorTxt');
+  document.querySelectorAll('[data-ver]').forEach((b) => b.addEventListener('click', () => {
+    const img = b.querySelector('img');
+    visorImg.src = img.src;
+    visorImg.alt = img.alt;
+    visorTxt.textContent = b.parentElement.querySelector('figcaption')?.textContent || '';
+    if (typeof visor.showModal === 'function') visor.showModal(); else window.open(img.src, '_blank');
+  }));
+  document.getElementById('cerrarVisor').addEventListener('click', () => visor.close());
+  visor.addEventListener('click', (e) => { if (e.target === visor) visor.close(); });
+
+  // QR que abre esta misma página (para el stand de la feria)
+  try {
+    if (!location.protocol.startsWith('http')) throw new Error('archivo local');
+    const url = location.href.split('#')[0];
+    new QRCode(document.getElementById('qr'), { text: url, width: 200, height: 200, colorDark: '#231a13', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  } catch (e) {
+    document.getElementById('qr').textContent = 'El código aparecerá al publicar la página en internet';
+  }
+  // QR del carnet digital de la maqueta (mismo formato que el carnet real: RONDA:<id>:<dni>)
+  try {
+    new QRCode(document.getElementById('qrCarnet'), { text: 'RONDA:3:70000003', width: 160, height: 160, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  } catch (e) { /* sin conexión: queda el marco vacío */ }
+</script>
+</body>
+</html>
